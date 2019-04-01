@@ -5,7 +5,7 @@ import java.util.Queue;
 
 /**
  * @author Yusra Irfan -- yirfan3 -- 250959680
- *
+ * @author Phillip Hung Truong -- htruon -- 250957227
  */
 public class Assignment3 {
 
@@ -16,71 +16,58 @@ public class Assignment3 {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public int breadthFirstPathSearch(Graph FN, int s,int d) {
-		int parent[] = new int [FN.size()]; 
-		int visited[] = new int [FN.size()]; 
-	  // Create a visited array and mark all vertices as 0
-	        for(int i=0; i<visited.length; i++) 
-	            visited[i]=0; 
-	  
-	        // Create a queue, enqueue f
-	        Queue<Integer> queue = new LinkedList<>(); 
-	        queue.add(s);
-	        parent[s]=-1;
-	        
-	        while (queue.size()!=0) 
-	        { 
-	        
-	        	int dequeued = queue.remove(); 
-	        	for (int v=0; v<visited.length; v++) 
-	            { 
-	                if (visited[v]==0 ) // and check if the capacity - flow > 0 of the edge 
-	                { 
-	                    queue.add(v); 
-	                    parent[v] = dequeued; 
-	                    visited[v] = 1; 
-	                } 
-	            } 
-	        	
-	        }
-	        	       
-	        return  (visited[d]) ; 
-	  
-	}
-		
-	public void maximizeFlowNetwork(Graph fN, int s,int t) {
-		
-		
-		  
-         while (breadthFirstPathSearch( fN,  s, t)==1) 
-        { 
-        
-        } 
-  
-    
-		
-	} 
-//	
-//	class Node {
-//
-//		ArrayList<Edge> edges = new ArrayList<>();
-//
-//	}
-//
-//	
-	
-	class Edge {
-		
-		public int flow , flowCap;
-		//Edge reverse;
+		int parent[] = new int [FN.numVertices()]; 
+		int visited[] = new int [FN.numVertices()]; 
+		// Create a visited array and mark all vertices as 0
+		for(int i=0; i<visited.length; i++) 
+			visited[i]=0; 
 
-		public Edge(int u , int v , int flow , int capacity) {
-			
-			this.flow = flow;
-			flowCap = capacity;
+		// Create a queue, enqueue f
+		Queue<Vertex> queue = new LinkedList<>(); 
+		queue.add(FN.getVertex(s));
+		parent[s]=-1;
+		//  visited[s]=1;
+
+		while (queue.size()!=0) 
+		{ 
+
+			Vertex dequeued = queue.remove(); 
+			for (int v=0; v<visited.length; v++) 
+			{ 
+				if (visited[v]==0  && FN.getEdge(dequeued, FN.getVertex(v)).flow() > FN.getEdge(dequeued, FN.getVertex(v)).flowCapacity()) 
+				{ 
+					queue.add(FN.getVertex(v)); 
+					parent[v] = dequeued.getLabel(); 
+					visited[v] = 1; 
+				} 
+			} 
+
 		}
-	
+
+		if (visited[d]==1)
+			return 1;
+		else
+			return 0; 
+
+	}
+
+	public void maximizeFlowNetwork(Graph fN, int s,int t) {
+
+		int maximumFlow= 0; //no flow 
+
+		//int v,u;
+		while (breadthFirstPathSearch( fN,  s, t)==1) 
+		{ 
+
+		} 
+
+
+
+	} 
+
+
 
 }
-}
+
