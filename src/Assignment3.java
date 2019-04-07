@@ -1,7 +1,5 @@
-import java.util.*;
-
+import java.util.LinkedList;
 import java.util.Queue;
-
 
 /**
  * @author Yusra Irfan -- yirfan3 -- 250959680
@@ -9,102 +7,83 @@ import java.util.Queue;
  */
 public class Assignment3 {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int breadthFirstPathSearch(Graph FN, int s,int d) {
-	int visited[] = new int [FN.numVertices()]; 
+	public int breadthFirstPathSearch(Graph <Integer,Integer> FN, int s, int d) {
+		int visited[] = new int[FN.numVertices()];
 		// Create a visited array and mark all vertices as 0
-		for(int i=0; i<visited.length; i++) 
-			visited[i]=0; 
+		for (int i = 0; i < visited.length; i++)
+			visited[i] = 0;
 
 		// Create a queue, enqueue f
-		Queue<Vertex> queue = new LinkedList<>(); 
-		queue.add(FN.getVertex(s));
-		FN.getVertex(s).setPredecessor(-1);
-		visited[s]=1;
+		Queue<Vertex<Integer>> queue = new LinkedList<>();
+		queue.add(FN.getVertex(s)); //add the first node
+		FN.getVertex(s).setPredecessor(-1); //set the parent to -1 which means it has no parent
+		visited[s] = 1;
 
-		while (queue.size()!=0) 
-		{ 
+		while (!queue.isEmpty()) { //size of q is not 0
 
-			Vertex dequeued = queue.remove(); 
-			for (int v=0; v<visited.length; v++) 
-			{ 
-				if (visited[v]==0  && FN.getEdge(dequeued, FN.getVertex(v)).flow() > FN.getEdge(dequeued, FN.getVertex(v)).flowCapacity()) 
-				{ 
-					queue.add(FN.getVertex(v)); 
-					//parent[v] = dequeued.getLabel(); 
-					FN.getVertex(s).setPredecessor(dequeued.getLabel());
-					visited[v] = 1; 
-				} 
-			} 
+			Vertex<Integer> dequeued = queue.remove(); //dequeue the node
+			for (int v = 0; v < visited.length; v++) {
+				Edges <Integer> edge = FN.getEdge(dequeued, FN.getVertex(v)); 
+				if (visited[v] == 0 && edge.flow() < edge.flowCapacity()) { //checking if its full or not 
+					queue.add(FN.getVertex(v)); //adding the vertex to the list
+					FN.getVertex(s).setPredecessor(dequeued.getLabel()); //setting the parent
+					visited[v] = 1;
+				} //end if
+			} //end for
+		}// end while 
 
-		}
-
-		if (visited[d]==1)
+		if (visited[d] == 1) //if all visited 
 			return 1;
 		else
-			return 0; 
+			return 0;
+	} //end function 
 
-	}
+	public void maximizeFlowNetwork(Graph<Integer, Integer> fN, int s, int t) {
 
-	
-	public void maximizeFlowNetwork(Graph<Integer,Integer>fN, int s,int t) { 
+		// if there are only two nodes
+		if (s == t) 
+			return;
 
-		int maximumFlow= 0; //no flow 
+		int maximumFlow = 0; // initially no flow
 
-		
-		//int vertexU=0;	//iterator vertices to loop over the matrix
-		//int vertexV =0;
+		Graph<Integer, Integer> residualGraph = fN; //copy graph including flow capacity 
 
-		Graph <Integer, Integer> residualGraph = fN;
-		//assuming flow is iinitially zero 
-		
+		// assuming flow is initially zero
 		
 		
-		 Vertex <Integer> v,u;
-		
-			
-		
-		while (breadthFirstPathSearch( fN,  s, t)==1) 
-		{ 
-			int bottleneckFlow = Integer.MAX_VALUE;		//we want the bottleneck (minimum), so initially set it to the largest number possible. Loop updates value if it's smaller
-			v = fN.getVertex(t); 
-			
-			while (v!=fN.getVertex(s)) {
-				u=v.getPredecessor();
-				bottleneckFlow = minimum(bottleneckFlow, residualGraph.getEdge(u, v).flowCapacity());
-				v=v.getPredecessor();
-			}
-				
-			v = fN.getVertex(t); 
-			while (v!=fN.getVertex(s)) {
-				u=v.getPredecessor();
-				residualGraph.getEdge(u, v).setFlow(residualGraph.getEdge(u, v).flow()+bottleneckFlow);//forward 	
-				residualGraph.getEdge(u, v).setFlow(residualGraph.getEdge(u, v).flow()-bottleneckFlow);//reverse
-				v=v.getPredecessor();
-			}
-			maximumFlow=+ bottleneckFlow;
-	} 
-	
+		Vertex<Integer> vertexV, vertexU;
 
-		 
-		 
+		while (breadthFirstPathSearch(fN, s, t) == 1) { //if a path exists 
+			int flow = Integer.MAX_VALUE; // we want the minimum, so initially set it to the max number possible.
+			vertexV = fN.getVertex(t); //end vertex
+			Edges <Integer> uvEdge ;
+			while (vertexV != fN.getVertex(s)) { //loop till its the start vertex
+				vertexU = vertexV.getPredecessor(); //saves v's parent
+				uvEdge =  residualGraph.getEdge(vertexU, vertexV); //saves the edge 
+				flow = minimum(flow, uvEdge.flowCapacity());
+				vertexV = vertexU; //v's parent 
+			} //end while 
+
+			vertexV = fN.getVertex(t); //end vertex
+			while (vertexV != fN.getVertex(s)) { //loop till its the start vertex
+				vertexU = vertexV.getPredecessor(); //saves v's parent
+				uvEdge =  residualGraph.getEdge(vertexU, vertexV);				
+				uvEdge.setFlow(uvEdge.flow() + flow);// forward
+				uvEdge.setFlow(uvEdge.flow() - flow);// reverse
+				vertexV = vertexU; //v's parent 
+			} //end while
+			maximumFlow += flow; //increases the flow
+		} //end while 
+
 		System.out.println(maximumFlow);
-}
+	} //end function
 
 	private int minimum(int bottleneckFlow, int capacity) {
-		// TODO Auto-generated method stub
-		
-		if (bottleneckFlow<capacity)
+		//return the minimum value
+		if (bottleneckFlow < capacity)
 			return bottleneckFlow;
-		else return capacity;
-		
-	}
-}
+		else
+			return capacity;
 
+	} //end function
+} // end class
