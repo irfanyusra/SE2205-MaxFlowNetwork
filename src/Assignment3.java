@@ -72,16 +72,16 @@ public class Assignment3 {
 				uvEdge.setFlow(uvEdge.flow() - flow);// reverse
 				vertexV = vertexU; //v's parent 
 			} //end while
-			maximumFlow += flow; //increases the flow
+			maximumFlow += flow; //increases the maximum flow
 		} //end while 
 
 		System.out.println(maximumFlow);
 	} //end function
 
-	private int minimum(int bottleneckFlow, int capacity) {
+	private int minimum(int flow, int capacity) {
 		//return the minimum value
-		if (bottleneckFlow < capacity)
-			return bottleneckFlow;
+		if (flow < capacity)
+			return flow;
 		else
 			return capacity;
 

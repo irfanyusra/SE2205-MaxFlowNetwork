@@ -1,11 +1,9 @@
 
 public interface Vertex<V> {
 
-	public int getLabel();
+	public int getLabel(); 
 
-	public Vertex<V> getPredecessor();
+	public Vertex<V> getPredecessor(); //basically get parent, got it from the slides
 
-	public int getPredecessor1();
-
-	public void setPredecessor(int i);
+	public void setPredecessor(int i); //basically set parent, got it from the slides
 }

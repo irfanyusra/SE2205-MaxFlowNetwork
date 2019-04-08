@@ -1,8 +1,8 @@
 
 public interface Edges<E> {
-	public int flowCapacity();
+	public int flowCapacity(); //maximum flow capacity
 
-	public int flow();
+	public int flow(); //current flow
 
-	public void setFlow(int newFlow);
+	public void setFlow(int newFlow); //to set the current flow 
 }
